@@ -1,7 +1,7 @@
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
 
 from ...config import image_train_dir, image_test_dir
-from ...utils import emotions
+from ...utils.emotions import emotions
 
 img_size  = (256, 256)
 batch     = 32
@@ -32,13 +32,15 @@ def image_generator():
     # image augmentation
     train_datagen, test_datagen = data_augmentation()
 
+    emotion_class = emotions()
+
     # load from train dir
     train_gen = train_datagen.flow_from_directory(
         image_train_dir,
         target_size = img_size,
         batch_size = batch,
         class_mode = "categorical",
-        classes = emotions
+        classes = emotion_class
     )
 
     # load from test dir
@@ -47,7 +49,7 @@ def image_generator():
         target_size = img_size,
         batch_size = batch,
         class_mode = "categorical",
-        classes = emotions
+        classes = emotion_class
     )
 
     return train_gen, test_gen

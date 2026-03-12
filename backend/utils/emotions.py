@@ -1,2 +1,3 @@
 def emotions():
-    return ["angry", "fear", "happy", "disgusted", "sad"]
+    emotion_list = ["angry", "fear", "happy", "disgusted", "sad"]
+    return emotion_list

@@ -1,7 +1,7 @@
-from tensorflow.python.keras.callbacks import EarlyStopping
-from tensorflow.python.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.regularizers import l2
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.regularizers import l2
 
 l2_reg = 0.001
 
@@ -113,8 +113,6 @@ def train_image_model():
         mode="auto",
         restore_best_weights = False
     )
-
-    model.fit()
 
 train_image_model()
 
