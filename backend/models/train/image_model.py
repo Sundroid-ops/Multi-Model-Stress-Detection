@@ -1,7 +1,10 @@
+from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
+
+from ..preprocess.data_augmentation import image_generator
 
 l2_reg = 0.001
 
@@ -103,8 +106,6 @@ def train_image_model():
     model = build_image_model(input_shape=(256, 256, 3), num_classes = 5)
     model.summary()
 
-    model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
-
     callback = EarlyStopping(
         monitor="val_loss",
         min_delta=0.00001,
@@ -113,6 +114,11 @@ def train_image_model():
         mode="auto",
         restore_best_weights = False
     )
+
+    train_gen, test_gen = image_generator()
+
+    model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
+    history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
 
 train_image_model()
 
