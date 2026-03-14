@@ -30,7 +30,13 @@ def audio_preprocess():
     y_encoded = encoder.fit_transform(emotion_label)
     y_onehot = to_categorical(y_encoded)
 
-    # splitting train and test data
+    return X, y_encoded, y_onehot
+
+# loading audio data for audio model training
+def load_audio_data():
+    X, y_encoded, y_onehot = audio_preprocess()
+
+    # splitting training and testing data
     X_train, X_test, y_train, y_test = train_test_split(
         X, y_onehot,
         test_size=0.2,
@@ -39,5 +45,3 @@ def audio_preprocess():
     )
 
     return X_train, X_test, y_train, y_test
-
-audio_preprocess()
