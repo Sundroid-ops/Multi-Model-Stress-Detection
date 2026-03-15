@@ -115,6 +115,7 @@ def train_image_model():
         restore_best_weights = False
     )
 
+    # retrieving train and test generators
     train_gen, test_gen = image_generator()
 
     model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
