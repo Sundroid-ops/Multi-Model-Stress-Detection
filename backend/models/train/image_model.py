@@ -4,6 +4,7 @@ from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, F
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
 
+from backend.models.evaluate_model import evaluate_model
 from backend.models.preprocess.data_augmentation import image_generator
 
 l2_reg = 0.001
@@ -120,6 +121,8 @@ def train_image_model():
 
     model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
     history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
+
+    evaluate_model(history)
 
 train_image_model()
 
