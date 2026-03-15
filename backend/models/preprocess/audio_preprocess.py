@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
-from ...config import audio_dir
+from backend.config import audio_dir
 
 # processing csv data to training and test data
 def audio_preprocess():

@@ -1,7 +1,7 @@
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
 
-from ...config import image_train_dir, image_test_dir
-from ...utils.emotions import emotions
+from backend.config import image_train_dir, image_test_dir
+from backend.utils.emotions import emotions
 
 img_size  = (256, 256)
 batch     = 32
