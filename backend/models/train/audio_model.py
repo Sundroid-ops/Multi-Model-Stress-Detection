@@ -72,7 +72,3 @@ def train_audio_model():
     history = model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs = 100, batch_size = 32, callbacks = callback)
 
     evaluate_model(history)
-
-
-train_audio_model()
-
