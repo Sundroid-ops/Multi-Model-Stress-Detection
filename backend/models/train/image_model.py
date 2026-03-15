@@ -1,4 +1,3 @@
-from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.models import Sequential
@@ -123,8 +122,3 @@ def train_image_model():
     history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
 
     evaluate_model(history)
-
-train_image_model()
-
-
-
