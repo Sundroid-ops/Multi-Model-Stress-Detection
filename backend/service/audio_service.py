@@ -1,6 +1,8 @@
 import ffmpeg
 from pathlib import Path
 
+import librosa
+
 from backend.config import audio_store_dir
 
 # extract audio from video using ffmpeg
@@ -27,5 +29,27 @@ def extract_audio(video_path):
         print(f"[extract_audio] ffmpeg error: {err.stderr.decode()}")
         raise
     except Exception as ex:
-        print('Unexpected Error while extracting audio features', ex)
+        print('Unexpected Error while extracting audio', ex)
+        raise
+
+# split audio into 3 second segments
+def split_audio(audio_path, segment_duration = 3):
+    try:
+        audio, sr = librosa.load(audio_path)
+        segment_length = segment_duration * sr
+
+        segments = []
+
+        for start in range(0, len(audio), segment_length):
+            end = start + segment_length
+            segment = audio[start:end]
+
+            # segment = 3 secs data
+            if len(segment) == segment_length:
+                segments.append(segment)
+
+        return segments, sr
+
+    except Exception as ex:
+        print('Unexpected Error while splitting audio', ex)
         raise
