@@ -9,8 +9,10 @@ from backend.config import audio_store_dir
 # extract audio from video using ffmpeg
 def extract_audio(video_path):
     try:
+        print('extracting audio ....')
+
         audio_file = Path(video_path)
-        audio_path = audio_store_dir/ f"{audio_file.stem}.mp4"
+        audio_path = Path(audio_store_dir) / f"{audio_file.stem}.wav"
 
         # video -> audio (audio rate = 22050, audio channel = mono (1))
         ffmpeg.input(str(video_path)) \
@@ -36,8 +38,19 @@ def extract_audio(video_path):
 # split audio into 3 second segments
 def split_audio(audio_path, segment_duration = 3):
     try:
+        print('splitting audio ....')
+
         audio, sr = librosa.load(audio_path)
-        segment_length = segment_duration * sr
+        audio_length = len(audio)
+        duration = audio_length / sr
+
+        print(f"samples  : {audio_length}")
+        print(f"duration : {duration / sr:.2f}s")
+
+        if duration < segment_duration:
+            raise ValueError(f'Audio too short , minimum {segment_duration} seconds required for at least 1 segment')
+
+        segment_length = int(segment_duration * sr)
 
         segments = []
 
@@ -49,8 +62,12 @@ def split_audio(audio_path, segment_duration = 3):
             if len(segment) == segment_length:
                 segments.append(segment)
 
-        return segments, sr
+        print('splitting done')
 
+        return segments, sr
+    except ValueError as err:
+        print('error : ', err)
+        raise
     except Exception as ex:
         print('Unexpected Error while splitting audio', ex)
         raise
@@ -61,12 +78,15 @@ def extract_audio_features(video_path):
         audio_path = extract_audio(video_path)
         segments, sr = split_audio(audio_path)
 
+        print('extracting audio features ....')
+
         if not segments:
             return ValueError('No audio segments found')
 
         audio_features = []
 
         for segment in segments:
+            print('seg len: ', len(segment))
             # mfcc = (19, time_frames)
             mfcc = librosa.feature.mfcc(y = segment, sr = sr, n_mfcc = 19)
 
@@ -84,7 +104,7 @@ def extract_audio_features(video_path):
             # combine → (57,)
             feature_vector = np.hstack([mfcc_mean, delta_mean, delta2_mean])
 
-            segments.append(feature_vector)
+            audio_features.append(feature_vector)
 
         audio_features = np.array(audio_features)
         print('audio features shape: ', audio_features.shape)
