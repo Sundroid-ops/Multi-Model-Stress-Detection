@@ -13,7 +13,7 @@ def extract_video_features(video_path):
         # audio_features
         audio_features = extract_audio_features(video_path)
 
-        # image_features
+        # TODO: image_features
 
     except FileNotFoundError as err:
         print('error: ', err)
