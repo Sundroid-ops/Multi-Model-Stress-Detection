@@ -19,5 +19,3 @@ def extract_image_features(video_path):
     except Exception as ex:
         print('Unexpected error while extracting image features: ', ex)
         raise
-
-extract_image_features(r"C:\Users\lipun\OneDrive\Pictures\Camera Roll\WIN_20260309_13_20_31_Pro.mp4")
