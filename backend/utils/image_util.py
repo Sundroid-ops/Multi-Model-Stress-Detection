@@ -30,7 +30,7 @@ def extract_images(video_path, fps = 3):
 
         print(f"Extracted {len(image_paths)} frames: {images_dir}")
 
-        print(str(img) for img in image_paths)
+        return [str(img) for img in image_paths]
 
     except ffmpeg.Error as e:
         print(f"[extract_images] ffmpeg error: {e.stderr.decode()}")
