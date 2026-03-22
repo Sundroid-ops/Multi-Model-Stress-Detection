@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
-from backend.config import audio_dir, audio_scaler_path
+from backend.config import audio_dir, audio_scaler_path, audio_encoder_path
 
 # processing csv data to training and test data
 def audio_preprocess():
@@ -34,6 +34,10 @@ def audio_preprocess():
     encoder = LabelEncoder()
     y_encoded = encoder.fit_transform(emotion_label)
     y_onehot = to_categorical(y_encoded)
+
+    # saving trained encoder for using during inference
+    joblib.dump(encoder, audio_encoder_path)
+    print('Encoder saved for model inference')
 
     return X, y_encoded, y_onehot
 
