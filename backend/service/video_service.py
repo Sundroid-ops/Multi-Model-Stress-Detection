@@ -1,10 +1,11 @@
 from backend.service.audio_service import extract_audio_features
+from backend.service.image_service import extract_image_features
 from backend.utils.video_util import allowed_file
 
 # extract video features (images + audio)
 def extract_video_features(video_path):
     try:
-        if video_path == '':
+        if not video_path:
             raise FileNotFoundError('No file provided')
 
         if not allowed_file(video_path):
@@ -13,13 +14,17 @@ def extract_video_features(video_path):
         # audio_features
         audio_features = extract_audio_features(video_path)
 
-        # TODO: image_features
+        if not audio_features:
+            raise ValueError('Audio features extraction failed')
+
+        # image_features
+        image_features = extract_image_features(video_path)
+
+        if not image_features:
+            raise ValueError('Image features extraction failed')
+
+        return audio_features, image_features
 
     except FileNotFoundError as err:
         print('error: ', err)
-
-    except ValueError as err:
-        print('error: ', err)
-
-    except Exception as ex:
-        print('Unexpected error: ', ex)
+        raise

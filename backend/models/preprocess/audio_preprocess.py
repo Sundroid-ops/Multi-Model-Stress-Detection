@@ -1,10 +1,11 @@
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
-from backend.config import audio_dir
+from backend.config import audio_dir, audio_scaler_path
 
 # processing csv data to training and test data
 def audio_preprocess():
@@ -22,8 +23,12 @@ def audio_preprocess():
     X = np.concatenate((mfcc, delta, delta2), axis = 1)
 
     # normalizing features
-    scalar = StandardScaler()
-    X = scalar.fit_transform(X)
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
+
+    # saving trained scaler for using during inference
+    joblib.dump(scaler, audio_scaler_path)
+    print('Scaler saved for model inference')
 
     # encoding labels
     encoder = LabelEncoder()

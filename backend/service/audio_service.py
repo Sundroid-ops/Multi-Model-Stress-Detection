@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 
+from backend.models.preprocess.inference.audio_inference_preprocess import audio_inference_preprocess
 from backend.utils.audio_util import extract_audio, split_audio
 
 # extract mfcc, delta, delta2 per segment
@@ -12,7 +13,7 @@ def extract_audio_features(video_path):
         print('extracting audio features ....')
 
         if not segments:
-            return ValueError('No audio segments found')
+            raise ValueError('No audio segments found')
 
         audio_features = []
 
@@ -39,10 +40,13 @@ def extract_audio_features(video_path):
         audio_features = np.array(audio_features)
         print('audio features shape: ', audio_features.shape)
 
+        # preprocess audio features for model inference
+        audio_features = audio_inference_preprocess(audio_features)
+
+        print('Audio features extracted successfully ....')
+
         return audio_features
 
-    except ValueError as err:
-        print('error : ', err)
     except Exception as ex:
         print('Unexpected Error while extracting audio features', ex)
         raise
