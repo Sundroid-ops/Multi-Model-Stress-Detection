@@ -1,6 +1,6 @@
 import numpy as np
 
-from backend.utils.emotions import emotions
+from backend.utils.emotions_util import get_emotions
 
 # fusion logic based on audio and image vectors
 def fusion(audio_vector, image_vector, audio_weight = 0.4, image_weight = 0.6):
@@ -27,7 +27,7 @@ def fusion(audio_vector, image_vector, audio_weight = 0.4, image_weight = 0.6):
         image_idx = np.argmax(image_vector)
 
         agreement_fusion = weighted.copy()
-        emotions_lst = emotions() # list containing types of emotions
+        emotions_lst = get_emotions() # list containing types of emotions
 
         # both models agree on same emotion
         if audio_idx == image_idx:
