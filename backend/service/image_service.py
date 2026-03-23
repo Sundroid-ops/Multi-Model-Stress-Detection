@@ -1,4 +1,4 @@
-from backend.models.preprocess.inference.image_inference import image_preprocess_inference
+from backend.models.preprocess.inference.image_inference_preprocess import image_preprocess_inference
 from backend.utils.image_util import extract_images
 
 # extract and preprocess images for model inference

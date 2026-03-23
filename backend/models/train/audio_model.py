@@ -5,7 +5,7 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.callbacks import EarlyStopping
 
 from backend.models.evaluate_model import evaluate_model
-from backend.models.preprocess.audio_preprocess import load_audio_data
+from backend.models.preprocess.train.audio_train_preprocess import load_audio_data
 
 l2_reg = 0.001
 
