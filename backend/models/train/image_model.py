@@ -4,7 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
 
 from backend.models.evaluate_model import evaluate_model
-from backend.models.preprocess.data_augmentation import image_generator
+from backend.models.preprocess.train.data_augmentation import image_generator
 
 l2_reg = 0.001
 

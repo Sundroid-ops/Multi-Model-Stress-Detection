@@ -8,7 +8,7 @@ from tensorflow.python.keras.utils.np_utils import to_categorical
 from backend.config import audio_dir, audio_scaler_path, audio_encoder_path
 
 # processing csv data to training and test data
-def audio_preprocess():
+def audio_train_preprocess():
     df = pd.read_csv(audio_dir)
 
     # splitting 57 cols into 3 groups of 19
@@ -43,7 +43,7 @@ def audio_preprocess():
 
 # loading audio data for audio model training
 def load_audio_data():
-    X, y_encoded, y_onehot = audio_preprocess()
+    X, y_encoded, y_onehot = audio_train_preprocess()
 
     # splitting training and testing data
     X_train, X_test, y_train, y_test = train_test_split(
