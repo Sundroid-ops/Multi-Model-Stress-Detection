@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
 
+from backend.config import image_model
 from backend.models.evaluate_model import evaluate_model
 from backend.models.preprocess.train.data_augmentation import image_generator
 
@@ -103,22 +106,31 @@ def build_image_model(input_shape, num_classes):
 
 # train image model
 def train_image_model():
-    model = build_image_model(input_shape=(256, 256, 3), num_classes = 5)
-    model.summary()
+    try:
+        model = build_image_model(input_shape=(256, 256, 3), num_classes = 5)
+        model.summary()
 
-    callback = EarlyStopping(
-        monitor="val_loss",
-        min_delta=0.00001,
-        patience=20,
-        verbose=1,
-        mode="auto",
-        restore_best_weights = False
-    )
+        callback = EarlyStopping(
+            monitor="val_loss",
+            min_delta=0.00001,
+            patience=20,
+            verbose=1,
+            mode="auto",
+            restore_best_weights = False
+        )
 
-    # retrieving train and test generators
-    train_gen, test_gen = image_generator()
+        # retrieving train and test generators
+        train_gen, test_gen = image_generator()
 
-    model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
-    history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
+        model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
+        history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
 
-    evaluate_model(history)
+        # plotting graphs and evaluating the model
+        evaluate_model(history)
+
+        # saving image model after training
+        model.save(Path(image_model))
+
+    except Exception as ex:
+        print('Unexpected error while training image model:', ex)
+        raise
