@@ -1,9 +1,12 @@
+from pathlib import Path
+
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.callbacks import EarlyStopping
 
+from backend.config import audio_model
 from backend.models.evaluate_model import evaluate_model
 from backend.models.preprocess.train.audio_train_preprocess import load_audio_data
 
@@ -48,27 +51,41 @@ def build_audio_model(input_shape, num_classes):
     return model
 
 def train_audio_model():
-    X_train, X_test, y_train, y_test = load_audio_data()
+    try:
+        print('Training audio model ....')
 
-    # 57 columns of audio data
-    input_dim = X_train.shape[1]
+        X_train, X_test, y_train, y_test = load_audio_data()
 
-    # num of classes of emotions
-    num_classes = y_train.shape[1]
+        # 57 columns of audio data
+        input_dim = X_train.shape[1]
 
-    model = build_audio_model(input_dim, num_classes)
-    model.summary()
+        # num of classes of emotions
+        num_classes = y_train.shape[1]
 
-    callback = EarlyStopping(
-        monitor = "val_loss",
-        min_delta = 0.00001,
-        patience = 20,
-        verbose = 1,
-        mode = "auto",
-        restore_best_weights = False
-    )
+        model = build_audio_model(input_dim, num_classes)
+        model.summary()
 
-    model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
-    history = model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs = 100, batch_size = 32, callbacks = callback)
+        callback = EarlyStopping(
+            monitor = "val_loss",
+            min_delta = 0.00001,
+            patience = 20,
+            verbose = 1,
+            mode = "auto",
+            restore_best_weights = False
+        )
 
-    evaluate_model(history)
+        model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
+        history = model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs = 100, batch_size = 32, callbacks = callback)
+
+        # plotting graphs and evaluating the model
+        evaluate_model(history)
+
+        # saving audio model after training
+        model.save(Path(audio_model))
+
+        print('Audio model trained successfully ....')
+        print('Audio model saved successfully .....')
+
+    except Exception as ex:
+        print('Unexpected error while training audio model:', ex)
+        raise
