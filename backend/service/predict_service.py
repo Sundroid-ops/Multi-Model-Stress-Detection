@@ -1,5 +1,6 @@
 import numpy as np
 
+from backend.service.video_service import extract_video_features
 from backend.utils.emotions_util import get_emotions
 
 # fusion logic based on audio and image vectors
@@ -62,4 +63,20 @@ def fusion(audio_vector, image_vector, audio_weight = 0.4, image_weight = 0.6):
 
     except Exception as ex:
         print('Unexpected error while applying fusion :', ex)
+        raise
+
+
+def predict(video_path):
+    try:
+        audio_features, image_features = extract_video_features(video_path)
+
+        # TODO : load audio model and predict
+        # TODO : load image model and predict
+
+        # TODO : pass both output vectors to apply fusion
+
+        # TODO : calculate stress levels
+
+    except Exception as ex:
+        print('Unexpected error while predicting', ex)
         raise
