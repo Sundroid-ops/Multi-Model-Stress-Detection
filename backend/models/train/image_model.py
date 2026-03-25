@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Conv2D, Activation, Dropout, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.models import Sequential
@@ -129,7 +127,7 @@ def train_image_model():
         evaluate_model(history)
 
         # saving image model after training
-        model.save(Path(image_model))
+        model.save(image_model)
 
     except Exception as ex:
         print('Unexpected error while training image model:', ex)

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation
@@ -81,7 +79,7 @@ def train_audio_model():
         evaluate_model(history)
 
         # saving audio model after training
-        model.save(Path(audio_model))
+        model.save(audio_model)
 
         print('Audio model trained successfully ....')
         print('Audio model saved successfully .....')
