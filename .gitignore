@@ -3,3 +3,4 @@ backend/config.py
 
 # trained models
 backend/models/audio
+backend/models/image
