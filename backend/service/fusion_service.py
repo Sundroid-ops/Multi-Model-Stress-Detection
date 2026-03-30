@@ -1,5 +1,7 @@
 import numpy as np
-from sklearn.metrics.cluster import entropy
+from scipy.stats import entropy
+
+from backend.utils.emotions_util import get_emotions
 
 # calculate entropy of model to know its certainty
 def model_certainty(vector):
@@ -7,6 +9,77 @@ def model_certainty(vector):
      max_entropy = np.log(len(vector))
 
      return float(1 - (e / max_entropy))
+
+# single window fusion for 1 audio vector and 1 averaged image vector
+def fuse_window(audio_vector, image_vector):
+    try:
+        audio_vector = np.array(audio_vector)
+        image_vector = np.array(image_vector)
+
+        # confidence based wights
+        audio_certainty = model_certainty(audio_vector)
+        image_certainty = model_certainty(image_vector)
+
+        total_certainty = audio_certainty + image_certainty
+        audio_weight = audio_certainty / total_certainty
+        image_weight = image_certainty / total_certainty
+
+        # strategy - 1 (confidence weighted average)
+        conf_weight = (audio_weight * audio_vector) + (image_weight * image_vector)
+        conf_weight /= conf_weight.sum() # normalize
+
+        # strategy - 2 (max fusion)
+        max_fusion = np.maximum(audio_vector, image_vector)
+        max_fusion /= max_fusion.sum()
+
+        # strategy - 3 (agreement fusion)
+        audio_idx = np.argmax(audio_vector)
+        image_idx = np.argmax(image_vector)
+
+        # agreement on same emotion
+        if audio_idx == image_idx:
+            boost = 1 + (total_certainty / 2) # boost by mean certainty
+            agreement_fusion = conf_weight.copy()
+
+            agreement_fusion[audio_idx] *= boost
+            agreement_fusion /= np.sum(agreement_fusion)
+            print(f'models agree on: {get_emotions()[audio_idx]}, boost: {boost:.4f}')
+
+            # combine all 3 strategies by their confidence
+            weighted_conf = model_certainty(conf_weight)
+            max_conf = model_certainty(max_fusion)
+            agreement_conf = model_certainty(agreement_fusion)
+
+            total_conf = weighted_conf + max_conf + agreement_conf
+            w1 = weighted_conf / total_conf
+            w2 = max_conf / total_conf
+            w3 = agreement_conf / total_conf
+
+            final_vector = (w1 * conf_weight) + (w2 * max_fusion) + (w3 * agreement_fusion)
+
+        else: # disagreement
+            agreement_fusion = np.zeros(len(get_emotions()))
+            print(f'models disagree -> audio: {get_emotions()[audio_idx]}, image: {get_emotions()[image_idx]}')
+
+            # combine all 2 strategies by their confidence
+            weighted_conf = model_certainty(conf_weight)
+            max_conf = model_certainty(max_fusion)
+
+            total_conf = weighted_conf + max_conf
+            w1 = weighted_conf / total_conf
+            w2 = max_conf / total_conf
+
+            final_vector = (w1 * conf_weight) + (w2 * max_fusion)
+
+        final_vector /= final_vector.sum()
+
+        print('Fusion for window: ', final_vector)
+
+        return final_vector
+
+    except Exception as ex:
+        print('Unexpected error while fusing window: ', ex)
+        raise
 
 # aggregate image vectors in window
 def aggregate_image_vectors(image_vectors):
@@ -21,7 +94,7 @@ def aggregate_image_vectors(image_vectors):
 
         # weighted average across images
         aggregated = np.average(vectors, axis = 0, weights = weights)
-        aggregated = aggregated/ np.sum(aggregated)
+        aggregated /= np.sum(aggregated)
 
         print(f'Aggregated {len(vectors)} frames -> {aggregated.round(4)}')
 
@@ -34,6 +107,8 @@ def aggregate_image_vectors(image_vectors):
 # align audio and image vectors based by time window
 def windowed_fusion(audio_vectors, image_vectors, fps = 1, segment_duration = 2):
     try:
+        print('Executing windowed fusion ....')
+
         audio_vectors = np.array(audio_vectors)
         image_vectors = np.array(image_vectors)
 
@@ -66,7 +141,8 @@ def windowed_fusion(audio_vectors, image_vectors, fps = 1, segment_duration = 2)
             else: # average frames
                 image_vector = aggregate_image_vectors(window_images)
 
-            # TODO: fuse window based on audio and image vector
+            # fuse window based on audio and image vector
+            fused_emotion = fuse_window(audio_vector, image_vector)
 
             # TODO: calculate stress from emotion fused vector
 
