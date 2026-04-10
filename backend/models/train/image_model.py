@@ -105,7 +105,7 @@ def build_image_model(input_shape, num_classes):
 # train image model
 def train_image_model():
     try:
-        model = build_image_model(input_shape=(256, 256, 3), num_classes = 5)
+        model = build_image_model(input_shape=(256, 256, 3), num_classes = 6)
         model.summary()
 
         callback = EarlyStopping(
@@ -121,7 +121,7 @@ def train_image_model():
         train_gen, test_gen = image_generator()
 
         model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy', metrics = ['accuracy'])
-        history = model.fit(train_gen, validation_data = test_gen, epochs=10, callbacks = callback)
+        history = model.fit(train_gen, validation_data = test_gen, epochs=100, batch_size=32, callbacks = callback)
 
         # plotting graphs and evaluating the model
         evaluate_model(history)
@@ -132,3 +132,5 @@ def train_image_model():
     except Exception as ex:
         print('Unexpected error while training image model:', ex)
         raise
+
+train_image_model()
