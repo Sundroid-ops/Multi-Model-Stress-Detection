@@ -6,12 +6,11 @@ def get_EMOTION_VA_MAP():
         "fear"    : (-0.8,  0.9),
         "happy"   : ( 0.8,  0.4),
         "neutral" : ( 0.0,  0.3),
-        "sad"     : (-0.7,  0.3),
-        "surprise": ( 0.2,  0.7)}
+        "sad"     : (-0.7,  0.3)}
 
     return EMOTION_VA_MAP
 
 # list of emotions
 def get_emotions():
-    emotion_list =  ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+    emotion_list =  ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad']
     return emotion_list
