@@ -1,19 +1,23 @@
+import tensorflow as tf
 from tensorflow.keras.layers import Layer, Dense
 import tensorflow.keras.backend as K
 
 class AttentionLayer(Layer):
     def __init__(self):
         super(AttentionLayer, self).__init__()
-        self.dense = Dense(1, activation='tanh')
+        self.dense1 = Dense(128, activation='relu')
+        self.dense2 = Dense(1)
 
     def call(self, inputs):
-        score = self.dense(inputs)
-        score = K.squeeze(score, axis=-1)
+        # inputs: (batch, H, W, C)
+        x = tf.reshape(inputs, (tf.shape(inputs)[0], -1, inputs.shape[-1]))
 
-        weights = K.softmax(score)
-        weights = K.expand_dims(weights, axis=-1)
+        score = self.dense1(x)
+        score = self.dense2(score)
 
-        context = inputs * weights
-        context = K.sum(context, axis=1)
+        weights = tf.nn.softmax(score, axis=1)
+
+        context = x * weights
+        context = tf.reduce_sum(context, axis=1)
 
         return context
