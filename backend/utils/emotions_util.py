@@ -12,5 +12,5 @@ def get_EMOTION_VA_MAP():
 
 # list of emotions
 def get_emotions():
-    emotion_list =  ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad']
+    emotion_list =  ['angry', 'disgust', 'fear', 'happy', 'sad', 'neutral']
     return emotion_list
