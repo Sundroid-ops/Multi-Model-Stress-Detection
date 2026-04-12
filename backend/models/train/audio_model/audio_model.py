@@ -13,7 +13,7 @@ from backend.models.preprocess.train.audio_preprocess.audio_generator import Aud
 from backend.models.preprocess.train.audio_preprocess.audio_train_preprocess import load_dataset
 from backend.models.train.audio_model.audio_Attention_Layer import AttentionLayer
 
-# build audio model
+# Architecture (EfficientNetB0 + Attention Layer + Dense)
 def build_model(input_shape, num_classes):
     l2_reg = 0.0001
 
@@ -91,7 +91,7 @@ def train_model():
         monitor='val_loss',
         patience=8,
         min_delta=1e-4,
-        restore_best_weights=True,
+        restore_best_weights=False,
         verbose=1
     )
 
