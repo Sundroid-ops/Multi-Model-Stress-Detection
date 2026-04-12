@@ -9,6 +9,8 @@ from sklearn.utils.class_weight import compute_class_weight
 from backend.models.evaluate_model import evaluate_model
 from backend.models.preprocess.train.data_augmentation import image_generator
 from backend.models.train.image_model.CBAM_attention_layer import CBAM
+from backend.utils.emotions_util import get_emotions
+
 
 # Architecture (EfficientNetB0 + CBAM + Dense)
 def build_image_model(input_shape, num_classes):
@@ -59,7 +61,7 @@ def train_image_model():
         print("Building Image Model...")
 
         # Build Model
-        model, base_model = build_image_model(input_shape=(256, 256, 3), num_classes=5)
+        model, base_model = build_image_model(input_shape=(256, 256, 3), num_classes=len(get_emotions()))
         model.summary()
 
         #  Generators
