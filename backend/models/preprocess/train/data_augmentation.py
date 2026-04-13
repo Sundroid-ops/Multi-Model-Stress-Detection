@@ -1,4 +1,5 @@
-from keras.src.legacy.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications.efficientnet import preprocess_input
 
 from backend.config import image_train_dir, image_test_dir
 from backend.utils.emotions_util import get_emotions
@@ -9,7 +10,7 @@ batch     = 32
 # augmentation for TRAIN only
 def data_augmentation():
     train_datagen = ImageDataGenerator(
-        rescale=1./255,            # scale pixels 0-1
+        preprocessing_function=preprocess_input, # scale pixels (-1,1)
         rotation_range=15,         # rotate up to 15 degrees
         width_shift_range=0.1,     # shift horizontally
         height_shift_range=0.1,    # shift vertically
@@ -22,7 +23,7 @@ def data_augmentation():
 
     # scaling ONLY for TEST
     test_datagen = ImageDataGenerator(
-        rescale=1./255
+        preprocessing_function=preprocess_input, # scale pixels (-1,1)
     )
 
     return train_datagen, test_datagen
